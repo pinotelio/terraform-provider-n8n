@@ -30,9 +30,11 @@ archives:
     files:
       - none*
 
-extra_files:
-  - glob: terraform-registry-manifest.json
-    name_template: '{{ .ProjectName }}_{{ .Version }}_manifest.json'
+release:
+  extra_files:
+    - glob: terraform-registry-manifest.json
+      name_template: '{{ .ProjectName }}_{{ .Version }}_manifest.json'
+  draft: false
 
 checksum:
   name_template: '{{ .ProjectName }}_{{ .Version }}_SHA256SUMS'
@@ -48,9 +50,6 @@ signs:
       - "${signature}"
       - "--detach-sign"
       - "${artifact}"
-
-release:
-  draft: false
 
 changelog:
   sort: asc
