@@ -1,0 +1,34 @@
+name: Feature Request
+description: File a Feature Request
+labels: ["feature-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Hi there,
+        Thank you for opening a feature request. Please provide as much detail as possible to help us understand your use case.
+  - type: textarea
+    id: affected-resources
+    attributes:
+      label: What resources or data sources are affected?
+      description: |
+        Please list the resources as a list, for example:
+          - n8n_workflow
+          - n8n_credential
+        If this issue appears to affect multiple resources, it may be an issue with Terraform's core, so please mention this.
+      placeholder: ex. resource_n8n_workflow
+    validations:
+      required: true
+  - type: textarea
+    id: feature-request
+    attributes:
+      label: Feature Request
+      description: Please describe the requested feature and the use case. ex. new resource, data source, or field in existing resource
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: |
+        Are there any other GitHub issues (open or closed) or Pull Requests that should be linked here?
+      placeholder: GH-0000
+

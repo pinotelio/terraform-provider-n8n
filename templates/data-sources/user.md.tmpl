@@ -1,0 +1,17 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.ProviderName}}"
+subcategory: ""
+description: |-
+  Fetches an n8n user.
+---
+
+# {{.Name}} ({{.Type}})
+
+Retrieves information about an existing n8n user.
+
+## Example Usage
+
+{{ tffile "examples/data-sources/n8n_user/data-source.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}
+

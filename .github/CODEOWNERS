@@ -1,0 +1,16 @@
+# Default owners for everything in the repo
+* @pinotelio
+
+# Documentation
+*.md @pinotelio
+docs/ @pinotelio
+templates/ @pinotelio
+
+# GitHub workflows
+.github/ @pinotelio
+
+# Go code
+*.go @pinotelio
+go.mod @pinotelio
+go.sum @pinotelio
+

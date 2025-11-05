@@ -1,0 +1,35 @@
+# Changelog labels for PR categorization
+# These labels are used by the changelog workflow to ensure proper PR documentation
+
+- name: changelog/breaking-change
+  color: d93f0b
+  description: Breaking changes that require major version bump
+
+- name: changelog/feature
+  color: 0e8a16
+  description: New features or enhancements
+
+- name: changelog/bug
+  color: d73a4a
+  description: Bug fixes
+
+- name: changelog/improvement
+  color: a2eeef
+  description: Improvements to existing features
+
+- name: changelog/documentation
+  color: 0075ca
+  description: Documentation updates
+
+- name: changelog/dependency
+  color: 0366d6
+  description: Dependency updates
+
+- name: changelog/note
+  color: fbca04
+  description: Release notes or important notices
+
+- name: changelog/no-changelog
+  color: ffffff
+  description: Changes that don't require changelog entry (e.g., CI, tests)
+

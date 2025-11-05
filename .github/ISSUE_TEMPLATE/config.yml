@@ -1,0 +1,12 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or Discussion
+    url: https://github.com/pinotelio/terraform-provider-n8n/discussions
+    about: Ask questions or discuss ideas with the community
+  - name: n8n Documentation
+    url: https://docs.n8n.io/
+    about: Check the official n8n documentation
+  - name: Terraform Documentation
+    url: https://www.terraform.io/docs
+    about: Check the official Terraform documentation
+

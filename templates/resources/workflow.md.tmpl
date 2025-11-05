@@ -1,0 +1,32 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.ProviderName}}"
+subcategory: ""
+description: |-
+  Manages an n8n workflow.
+---
+
+# {{.Name}} ({{.Type}})
+
+Manages an n8n workflow. Workflows are the core automation building blocks in n8n, consisting of nodes and connections that define the automation logic.
+
+## Example Usage
+
+{{ tffile "examples/resources/n8n_workflow/resource.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Import
+
+Workflows can be imported using their ID:
+
+```shell
+terraform import n8n_workflow.example 1
+```
+
+## Notes
+
+- The `nodes` and `connections` fields must be valid JSON strings
+- Workflow IDs are assigned by n8n and cannot be changed
+- When a workflow is deleted, it is permanently removed from n8n
+- The `active` field controls whether the workflow is running
+
