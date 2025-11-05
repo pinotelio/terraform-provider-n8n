@@ -92,4 +92,3 @@ This provider is distributed under the MIT License. See `LICENSE` for more infor
 ## Acknowledgments
 
 Built with the [Terraform Plugin Framework](https://github.com/hashicorp/terraform-plugin-framework) for the [n8n](https://n8n.io/) workflow automation platform.
-
