@@ -29,6 +29,11 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
 
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
       - name: Generate docs
         run: |
           go install github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs@latest
