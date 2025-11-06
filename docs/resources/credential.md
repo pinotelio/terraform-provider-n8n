@@ -1,5 +1,5 @@
 ---
-page_title: "n8n_credential Resource - n8n"
+page_title: "n8n_credential Resource - terraform-provider-n8n"
 subcategory: ""
 description: |-
   Manages an n8n credential.

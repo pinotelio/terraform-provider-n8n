@@ -1,5 +1,5 @@
 ---
-page_title: "n8n_workflow Resource - n8n"
+page_title: "n8n_workflow Resource - terraform-provider-n8n"
 subcategory: ""
 description: |-
   Manages an n8n workflow.

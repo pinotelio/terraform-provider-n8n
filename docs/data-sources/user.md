@@ -1,5 +1,5 @@
 ---
-page_title: "n8n_user Data Source - n8n"
+page_title: "n8n_user Data Source - terraform-provider-n8n"
 subcategory: ""
 description: |-
   Fetches an n8n user.
