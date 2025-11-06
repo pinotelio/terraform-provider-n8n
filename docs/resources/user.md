@@ -1,5 +1,5 @@
 ---
-page_title: "n8n_user Resource - n8n"
+page_title: "n8n_user Resource - terraform-provider-n8n"
 subcategory: ""
 description: |-
   Manages an n8n user.
@@ -16,6 +16,13 @@ Manages an n8n user. Users can have different roles and permissions within the n
 resource "n8n_user" "member" {
   email = "user@example.com"
   role  = "global:member"
+}
+
+# Output the invite URL for the user to accept the invitation
+output "member_invite_url" {
+  value       = n8n_user.member.invite_accept_url
+  description = "URL for the user to accept the invitation"
+  sensitive   = true
 }
 
 # Create an admin user
@@ -70,6 +77,7 @@ resource "n8n_user" "team" {
 
 - `created_at` (String) Timestamp when the user was created
 - `id` (String) User identifier
+- `invite_accept_url` (String) URL for the user to accept the invitation (only available after user creation)
 - `is_owner` (Boolean) Whether the user is an owner
 - `is_pending` (Boolean) Whether the user account is pending activation
 - `updated_at` (String) Timestamp when the user was last updated
@@ -88,4 +96,5 @@ terraform import n8n_user.example 8efb6ce5-3e21-4835-9d32-4135e870e912
 - User IDs are UUIDs assigned by n8n
 - When a user is deleted, they are permanently removed from n8n
 - Email cannot be changed after user creation (requires replacement)
+- The `invite_accept_url` is only available after user creation and can be used to send invitation links to new users
 

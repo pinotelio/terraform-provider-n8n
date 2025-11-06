@@ -356,14 +356,15 @@ func (c *Client) ListCredentials() ([]Credential, error) {
 
 // User represents an n8n user
 type User struct {
-	ID         string `json:"id,omitempty"`
-	Email      string `json:"email"`
-	Role       string `json:"role,omitempty"`
-	GlobalRole string `json:"globalRole,omitempty"` // Some n8n versions use globalRole instead of role
-	CreatedAt  string `json:"createdAt,omitempty"`
-	UpdatedAt  string `json:"updatedAt,omitempty"`
-	IsOwner    bool   `json:"isOwner,omitempty"`
-	IsPending  bool   `json:"isPending,omitempty"`
+	ID              string `json:"id,omitempty"`
+	Email           string `json:"email"`
+	Role            string `json:"role,omitempty"`
+	GlobalRole      string `json:"globalRole,omitempty"` // Some n8n versions use globalRole instead of role
+	CreatedAt       string `json:"createdAt,omitempty"`
+	UpdatedAt       string `json:"updatedAt,omitempty"`
+	InviteAcceptURL string `json:"inviteAcceptUrl,omitempty"` // Only populated on user creation
+	IsOwner         bool   `json:"isOwner,omitempty"`
+	IsPending       bool   `json:"isPending,omitempty"`
 }
 
 // GetRole returns the role, preferring GlobalRole if Role is empty
@@ -431,6 +432,9 @@ func (c *Client) CreateUser(user *User) (*User, error) {
 		return nil, fmt.Errorf("API error: %s", results[0].Error)
 	}
 
+	// Preserve the inviteAcceptUrl from the creation response
+	inviteAcceptURL := results[0].User.InviteAcceptURL
+
 	// Fetch the full user details to get all fields including role, timestamps, etc.
 	// The create response doesn't include all fields we need
 	createdUser, err := c.GetUser(results[0].User.ID)
@@ -443,6 +447,9 @@ func (c *Client) CreateUser(user *User) (*User, error) {
 	if createdUser.GetRole() == "" && user.Role != "" {
 		createdUser.SetRole(user.Role)
 	}
+
+	// Set the inviteAcceptUrl from the creation response (not available in GET response)
+	createdUser.InviteAcceptURL = inviteAcceptURL
 
 	return createdUser, nil
 }

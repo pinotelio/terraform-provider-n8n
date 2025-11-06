@@ -36,13 +36,14 @@ type userResource struct {
 
 // userResourceModel maps the resource schema data.
 type userResourceModel struct {
-	ID        types.String `tfsdk:"id"`
-	Email     types.String `tfsdk:"email"`
-	Role      types.String `tfsdk:"role"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
-	IsOwner   types.Bool   `tfsdk:"is_owner"`
-	IsPending types.Bool   `tfsdk:"is_pending"`
+	ID              types.String `tfsdk:"id"`
+	Email           types.String `tfsdk:"email"`
+	Role            types.String `tfsdk:"role"`
+	CreatedAt       types.String `tfsdk:"created_at"`
+	UpdatedAt       types.String `tfsdk:"updated_at"`
+	InviteAcceptURL types.String `tfsdk:"invite_accept_url"`
+	IsOwner         types.Bool   `tfsdk:"is_owner"`
+	IsPending       types.Bool   `tfsdk:"is_pending"`
 }
 
 // Metadata returns the resource type name.
@@ -106,6 +107,13 @@ func (r *userResource) Schema(_ context.Context, _ resource.SchemaRequest, resp 
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
+			"invite_accept_url": schema.StringAttribute{
+				Description: "URL for the user to accept the invitation (only available after user creation)",
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
+			},
 		},
 	}
 }
@@ -163,6 +171,7 @@ func (r *userResource) Create(ctx context.Context, req resource.CreateRequest, r
 	plan.IsPending = types.BoolValue(createdUser.IsPending)
 	plan.CreatedAt = types.StringValue(createdUser.CreatedAt)
 	plan.UpdatedAt = types.StringValue(createdUser.UpdatedAt)
+	plan.InviteAcceptURL = types.StringValue(createdUser.InviteAcceptURL)
 
 	// Set state to fully populated data
 	diags = resp.State.Set(ctx, plan)
