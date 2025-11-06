@@ -4,6 +4,13 @@ resource "n8n_user" "member" {
   role  = "global:member"
 }
 
+# Output the invite URL for the user to accept the invitation
+output "member_invite_url" {
+  value       = n8n_user.member.invite_accept_url
+  description = "URL for the user to accept the invitation"
+  sensitive   = true
+}
+
 # Create an admin user
 resource "n8n_user" "admin" {
   email = "admin@example.com"
