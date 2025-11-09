@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="https://n8n.io/brandguidelines/logo-white.svg" alt="n8n Logo" width="200"/>
+</div>
+
 # Terraform Provider for n8n
 
 [![Tests](https://github.com/pinotelio/terraform-provider-n8n/actions/workflows/test.yml/badge.svg)](https://github.com/pinotelio/terraform-provider-n8n/actions/workflows/test.yml)
