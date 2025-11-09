@@ -18,3 +18,6 @@ output "is_owner" {
   value = data.n8n_user.example.is_owner
 }
 
+output "member_invite_url" {
+  value = data.n8n_user.example.member_invite_url
+}
