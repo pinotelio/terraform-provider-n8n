@@ -71,7 +71,7 @@ func (r *userResource) Schema(_ context.Context, _ resource.SchemaRequest, resp 
 				},
 			},
 			"role": schema.StringAttribute{
-				Description: "Role of the user (e.g., 'global:owner', 'global:admin', 'global:member')",
+				Description: "Role of the user (e.g., 'global:owner', 'global:admin', 'global:member'). Changing it requires the n8n enterprise advancedPermissions feature.",
 				Optional:    true,
 				Computed:    true,
 				Default:     stringdefault.StaticString("global:member"),
@@ -210,7 +210,10 @@ func (r *userResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 
 	// Overwrite items with refreshed state
 	state.Email = types.StringValue(user.Email)
-	state.Role = types.StringValue(user.GetRole())
+	// n8n often omits the role from GET /users; don't clobber a known role with "".
+	if role := user.GetRole(); role != "" {
+		state.Role = types.StringValue(role)
+	}
 	state.IsOwner = types.BoolValue(user.IsOwner)
 	state.IsPending = types.BoolValue(user.IsPending)
 	state.CreatedAt = types.StringValue(user.CreatedAt)
@@ -242,16 +245,19 @@ func (r *userResource) Update(ctx context.Context, req resource.UpdateRequest, r
 
 	updatedUser, err := r.client.UpdateUser(plan.ID.ValueString(), user)
 	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Updating n8n User",
-			"Could not update user, unexpected error: "+err.Error(),
-		)
+		detail := "Could not update user: " + err.Error()
+		if strings.Contains(err.Error(), "advancedPermissions") || strings.Contains(err.Error(), "403") {
+			detail = "Changing a user's role requires the n8n enterprise advancedPermissions feature. " + err.Error()
+		}
+		resp.Diagnostics.AddError("Error Updating n8n User", detail)
 		return
 	}
 
 	// Update resource state with refreshed data from API
 	plan.Email = types.StringValue(updatedUser.Email)
-	plan.Role = types.StringValue(updatedUser.GetRole())
+	if role := updatedUser.GetRole(); role != "" {
+		plan.Role = types.StringValue(role)
+	}
 	plan.IsOwner = types.BoolValue(updatedUser.IsOwner)
 	plan.IsPending = types.BoolValue(updatedUser.IsPending)
 	plan.CreatedAt = types.StringValue(updatedUser.CreatedAt)

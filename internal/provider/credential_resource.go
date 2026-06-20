@@ -48,7 +48,7 @@ func (r *credentialResource) Metadata(_ context.Context, req resource.MetadataRe
 // Schema defines the schema for the resource.
 func (r *credentialResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages an n8n credential.\n\n" +
+		Description: "Manages an n8n credential.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Credential identifier",
@@ -160,21 +160,8 @@ func (r *credentialResource) Read(ctx context.Context, req resource.ReadRequest,
 		return
 	}
 
-	// n8n API does not support reading credentials for security reasons:
-	// - No GET /api/v1/credentials/{id} endpoint (returns 405)
-	// - No LIST /api/v1/credentials endpoint available
-	//
-	// Therefore, we cannot refresh the credential state from the API.
-	// We keep the existing state as-is. This means:
-	// - Terraform will not detect manual changes to credentials in n8n
-	// - The credential data remains in Terraform state
-	// - Changing any attribute replaces the credential (the API has no update
-	//   endpoint), via DELETE + POST
-	// - Deletes via Terraform work (using DELETE)
-	//
-	// This is a common pattern for resources with sensitive data that cannot be read back.
-
-	// Simply return the existing state without making any API calls
+	// The n8n API can't read credentials back (no GET/LIST endpoint), so keep the
+	// existing state as-is.
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -182,19 +169,12 @@ func (r *credentialResource) Read(ctx context.Context, req resource.ReadRequest,
 	}
 }
 
-// Update is intentionally unreachable. The n8n public API has no endpoint for
-// updating credentials (PATCH/PUT/POST to /api/v1/credentials/{id} return HTTP
-// 405), so every mutable attribute is marked RequiresReplace and Terraform
-// replaces the credential instead of updating it in place. This method is
-// implemented defensively to satisfy the resource.Resource interface; if it is
-// ever reached it indicates a schema regression (a mutable attribute missing
-// the RequiresReplace plan modifier).
+// Update is unreachable: the n8n API has no credential update endpoint, so all
+// mutable attributes are RequiresReplace and the credential is replaced instead.
 func (r *credentialResource) Update(_ context.Context, _ resource.UpdateRequest, resp *resource.UpdateResponse) {
 	resp.Diagnostics.AddError(
 		"Credential update not supported",
-		"The n8n API does not support updating credentials in place; credentials are "+
-			"replaced instead. This error should not occur — please report it to the "+
-			"provider maintainers.",
+		"n8n credentials cannot be updated in place; they are replaced.",
 	)
 }
 

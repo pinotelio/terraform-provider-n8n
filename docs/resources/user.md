@@ -71,7 +71,7 @@ resource "n8n_user" "team" {
 
 ### Optional
 
-- `role` (String) Role of the user (e.g., 'global:owner', 'global:admin', 'global:member')
+- `role` (String) Role of the user (e.g., 'global:owner', 'global:admin', 'global:member'). Changing it requires the n8n enterprise advancedPermissions feature.
 
 ### Read-Only
 
