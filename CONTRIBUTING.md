@@ -37,17 +37,7 @@ We welcome feature requests! Please open an issue with:
 5. **Ensure tests pass** by running `go test ./...`
 6. **Format your code** with `go fmt ./...`
 7. **Run code generation** with `go generate ./...` if you modified provider code
-8. **Add a changelog label** - Add one of the `changelog/*` labels to your PR:
-   - `changelog/feature` - New features or enhancements
-   - `changelog/bug` - Bug fixes
-   - `changelog/improvement` - Improvements to existing features
-   - `changelog/breaking-change` - Breaking changes
-   - `changelog/documentation` - Documentation updates
-   - `changelog/dependency` - Dependency updates
-   - `changelog/no-changelog` - Changes that don't require changelog entry (CI, tests, etc.)
-9. **Use proper PR title format** - Format: `[resource_name] Description` (e.g., `[n8n_workflow] Add tags support`)
-   - Not required for PRs with `changelog/note` or `changelog/no-changelog` labels
-10. **Submit a pull request** with a clear description
+8. **Submit a pull request** with a clear description
 
 ## Development Setup
 
@@ -336,33 +326,22 @@ Format:
 
 ## Release Process
 
-We follow a PR-based release process:
+Releases are cut by pushing a semver tag. The `Release` workflow (GoReleaser) then
+builds and GPG-signs the artifacts and publishes the GitHub release; the Terraform
+Registry ingests the new version automatically.
 
 ### For Maintainers
 
-1. **Prepare Release:**
-   - Go to Actions → "Prepare release" workflow
-   - Click "Run workflow"
-   - Enter version number (e.g., `0.2.0` without `v` prefix)
-   - This creates a release PR with updated CHANGELOG.md
-
-2. **Review Release PR:**
-   - Review the generated CHANGELOG.md
-   - Make any necessary adjustments
-   - Ensure all changes are properly documented
-
-3. **Merge Release PR:**
-   - Merge the PR to main
-   - The release workflow automatically:
-     - Creates a git tag (e.g., `v0.2.0`)
-     - Builds release artifacts with GoReleaser
-     - Creates a GitHub release
-     - Signs artifacts with GPG
-
-4. **Verify Release:**
-   - Check that the tag was created
-   - Verify the GitHub release is published
-   - Confirm artifacts are available and signed
+1. Make sure `main` is green and contains everything for the release.
+2. Tag and push:
+   ```bash
+   git tag v0.2.0
+   git push origin v0.2.0
+   ```
+3. The workflow builds all OS/arch artifacts, signs the checksums with GPG, and
+   creates the GitHub release. The Registry picks up the new version within a few
+   minutes.
+4. Verify the GitHub release and https://registry.terraform.io/providers/pinotelio/n8n.
 
 ### Version Numbering
 
@@ -374,12 +353,8 @@ We follow [Semantic Versioning](https://semver.org/):
 
 ### Hotfix Process
 
-For urgent fixes:
-
-1. Create a hotfix branch from main
-2. Make the fix and open a PR with `changelog/bug` label
-3. After merging, run the prepare_release workflow
-4. Follow standard release process
+For urgent fixes: merge the fix to `main`, then tag a new patch release as above
+(e.g. `git tag v0.2.1 && git push origin v0.2.1`).
 
 ## Questions?
 

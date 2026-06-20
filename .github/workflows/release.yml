@@ -1,43 +1,22 @@
 # Terraform Provider release workflow.
 name: Release
 
+# Releases are cut by pushing a semver tag, e.g. `git tag v1.1.0 && git push origin v1.1.0`.
+on:
+  push:
+    tags:
+      - 'v*'
+
 permissions:
   contents: write
-  pull-requests: write
-
-on:
-  pull_request:
-    types: [closed]
-    branches:
-      - main
 
 jobs:
-  create_release:
-    name: Create release
+  goreleaser:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'release/')
     steps:
-      - name: Create tag
-        id: create_tag
-        uses: actions/github-script@v7
-        env:
-          RELEASE_BRANCH: ${{ github.head_ref }}
-        with:
-          script: |
-            const tagName = `v${process.env.RELEASE_BRANCH.split("/")[1]}`;
-            await github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: `refs/tags/${tagName}`,
-              sha: context.payload.pull_request.merge_commit_sha,
-            });
-            core.setOutput("tag_name", tagName);
-            console.log(`Created tag: ${tagName}`);
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ steps.create_tag.outputs.tag_name }}
           fetch-depth: 0
 
       - name: Set up Go
@@ -62,4 +41,3 @@ jobs:
         env:
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
