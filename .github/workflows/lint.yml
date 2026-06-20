@@ -26,6 +26,9 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
       - name: Run linters
-        uses: golangci/golangci-lint-action@v4
+        # Pinned: golangci-lint v1.x (matches the v1-format .golangci.yml) and the
+        # v6 action that supports it. "latest" floats to v2, which cannot read a
+        # v1 config.
+        uses: golangci/golangci-lint-action@v6
         with:
-          version: latest
+          version: v1.64.8
