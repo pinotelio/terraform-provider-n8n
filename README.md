@@ -5,9 +5,11 @@
 # Terraform Provider for n8n
 
 [![Tests](https://github.com/pinotelio/terraform-provider-n8n/actions/workflows/test.yml/badge.svg)](https://github.com/pinotelio/terraform-provider-n8n/actions/workflows/test.yml)
+[![Lint](https://github.com/pinotelio/terraform-provider-n8n/actions/workflows/lint.yml/badge.svg)](https://github.com/pinotelio/terraform-provider-n8n/actions/workflows/lint.yml)
 [![Release](https://github.com/pinotelio/terraform-provider-n8n/actions/workflows/release.yml/badge.svg)](https://github.com/pinotelio/terraform-provider-n8n/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Terraform Registry](https://img.shields.io/badge/terraform-registry-623CE4)](https://registry.terraform.io/providers/pinotelio/n8n)
+[![Terraform Registry](https://img.shields.io/badge/terraform-registry-623CE4?logo=terraform)](https://registry.terraform.io/providers/pinotelio/n8n)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/pinotelio/terraform-provider-n8n)](https://go.dev)
 
 Manage your [n8n](https://n8n.io/) workflows, credentials, and users as code with Terraform. This provider enables Infrastructure as Code (IaC) practices for your n8n automation platform.
 

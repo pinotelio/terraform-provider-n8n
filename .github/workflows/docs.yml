@@ -35,9 +35,7 @@ jobs:
           terraform_wrapper: false
 
       - name: Generate docs
-        run: |
-          go install github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs@latest
-          go generate
+        run: go generate
 
       - name: Check for changes
         run: |
