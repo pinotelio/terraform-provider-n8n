@@ -50,9 +50,9 @@ resource "n8n_credential" "datadog_env" {
 
 ### Required
 
-- `data` (String, Sensitive) JSON string representing the credential data
-- `name` (String) Name of the credential
-- `type` (String) Type of the credential (e.g., 'httpBasicAuth', 'slackApi', etc.)
+- `data` (String, Sensitive) JSON string representing the credential data. Changing this forces a new credential, since the n8n API cannot update credential data in place.
+- `name` (String) Name of the credential. Changing this forces a new credential.
+- `type` (String) Type of the credential (e.g., 'httpBasicAuth', 'slackApi', etc.). Changing this forces a new credential.
 
 ### Read-Only
 

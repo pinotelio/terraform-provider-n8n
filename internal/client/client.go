@@ -318,21 +318,6 @@ func (c *Client) GetCredential(id string) (*Credential, error) {
 	return &result, nil
 }
 
-// UpdateCredential updates an existing credential
-func (c *Client) UpdateCredential(id string, credential *Credential) (*Credential, error) {
-	respBody, err := c.doRequest("PATCH", fmt.Sprintf("/api/v1/credentials/%s", id), credential)
-	if err != nil {
-		return nil, err
-	}
-
-	var result Credential
-	if err := json.Unmarshal(respBody, &result); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal response: %w", err)
-	}
-
-	return &result, nil
-}
-
 // DeleteCredential deletes a credential
 func (c *Client) DeleteCredential(id string) error {
 	_, err := c.doRequest("DELETE", fmt.Sprintf("/api/v1/credentials/%s", id), nil)

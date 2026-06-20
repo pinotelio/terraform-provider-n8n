@@ -48,7 +48,7 @@ func (r *credentialResource) Metadata(_ context.Context, req resource.MetadataRe
 // Schema defines the schema for the resource.
 func (r *credentialResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages an n8n credential.",
+		Description: "Manages an n8n credential.\n\n" +
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Credential identifier",
@@ -58,17 +58,26 @@ func (r *credentialResource) Schema(_ context.Context, _ resource.SchemaRequest,
 				},
 			},
 			"name": schema.StringAttribute{
-				Description: "Name of the credential",
+				Description: "Name of the credential. Changing this forces a new credential.",
 				Required:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"type": schema.StringAttribute{
-				Description: "Type of the credential (e.g., 'httpBasicAuth', 'slackApi', etc.)",
+				Description: "Type of the credential (e.g., 'httpBasicAuth', 'slackApi', etc.). Changing this forces a new credential.",
 				Required:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"data": schema.StringAttribute{
-				Description: "JSON string representing the credential data",
+				Description: "JSON string representing the credential data. Changing this forces a new credential, since the n8n API cannot update credential data in place.",
 				Required:    true,
 				Sensitive:   true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 		},
 	}
@@ -159,8 +168,9 @@ func (r *credentialResource) Read(ctx context.Context, req resource.ReadRequest,
 	// We keep the existing state as-is. This means:
 	// - Terraform will not detect manual changes to credentials in n8n
 	// - The credential data remains in Terraform state
-	// - Updates via Terraform will still work (using PATCH)
-	// - Deletes via Terraform will still work (using DELETE)
+	// - Changing any attribute replaces the credential (the API has no update
+	//   endpoint), via DELETE + POST
+	// - Deletes via Terraform work (using DELETE)
 	//
 	// This is a common pattern for resources with sensitive data that cannot be read back.
 
@@ -172,47 +182,20 @@ func (r *credentialResource) Read(ctx context.Context, req resource.ReadRequest,
 	}
 }
 
-// Update updates the resource and sets the updated Terraform state on success.
-func (r *credentialResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	// Retrieve values from plan
-	var plan credentialResourceModel
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	// Parse JSON string for data
-	var data map[string]interface{}
-	if err := json.Unmarshal([]byte(plan.Data.ValueString()), &data); err != nil {
-		resp.Diagnostics.AddError(
-			"Error parsing data JSON",
-			"Could not parse data JSON: "+err.Error(),
-		)
-		return
-	}
-
-	// Update existing credential
-	credential := &client.Credential{
-		Name: plan.Name.ValueString(),
-		Type: plan.Type.ValueString(),
-		Data: data,
-	}
-
-	_, err := r.client.UpdateCredential(plan.ID.ValueString(), credential)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Updating n8n Credential",
-			"Could not update credential, unexpected error: "+err.Error(),
-		)
-		return
-	}
-
-	diags = resp.State.Set(ctx, plan)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
+// Update is intentionally unreachable. The n8n public API has no endpoint for
+// updating credentials (PATCH/PUT/POST to /api/v1/credentials/{id} return HTTP
+// 405), so every mutable attribute is marked RequiresReplace and Terraform
+// replaces the credential instead of updating it in place. This method is
+// implemented defensively to satisfy the resource.Resource interface; if it is
+// ever reached it indicates a schema regression (a mutable attribute missing
+// the RequiresReplace plan modifier).
+func (r *credentialResource) Update(_ context.Context, _ resource.UpdateRequest, resp *resource.UpdateResponse) {
+	resp.Diagnostics.AddError(
+		"Credential update not supported",
+		"The n8n API does not support updating credentials in place; credentials are "+
+			"replaced instead. This error should not occur — please report it to the "+
+			"provider maintainers.",
+	)
 }
 
 // Delete deletes the resource and removes the Terraform state on success.
